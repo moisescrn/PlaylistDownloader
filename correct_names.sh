@@ -6,11 +6,15 @@
 # Usage: ./correct_names.sh target_directory
 
 TARGET_DIR=$1
+cd $TARGET_DIR
 
 for file in "$TARGET_DIR"/*; do
   if [[ -f "$file" ]]; then # Read files. Directories will remain unchanged
-    new_name=$(echo "$file" | sed "s/\[[^]]*\]//g" | tr -d " " | sed "s/\./\_/g;s/_\([^_]*\)$/.\1/")
+    basename="${file##*/}"
+    no_ext="${basename%.*}"
+    extension="${file##*.}"
+    new_name=$(echo "$no_ext" | sed "s/\[[^]]*\]//g" | sed 's/\b\([a-z]\)/\u\1/g' | tr -d " " | sed "s/\./\_/g;s/_\([^_]*\)$/.\1/")
     # Change name
-    mv "$file" "$new_name"
+    mv "$file" "${new_name}.${extension}"
   fi
 done
