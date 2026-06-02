@@ -13,7 +13,14 @@ for file in "$TARGET_DIR"/*; do
     basename="${file##*/}"
     no_ext="${basename%.*}"
     extension="${file##*.}"
-    new_name=$(echo "$no_ext" | sed "s/\[[^]]*\]//g" | sed 's/\b\([a-z]\)/\u\1/g' | tr -d " " | sed "s/\./\_/g;s/_\([^_]*\)$/.\1/")
+#    new_name=$(echo "$no_ext" | sed "s/\[[^]]*\]//g" | sed 's/\b\([a-z]\)/\u\1/g' | tr -d " " | sed "s/\./\_/g;s/_\([^_]*\)$/.\1/")
+    new_name=$(
+    echo "$no_ext" |
+    sed 's/\[[^]]*\]//g' |
+    tr ' ' '_' |
+    sed 's/[.,]//g' |
+    sed 's/[^[:alnum:]_áéíóúÁÉÍÓÚñÑ-]//g'
+)
     # Change name
     mv "$file" "${new_name}.${extension}"
   fi
